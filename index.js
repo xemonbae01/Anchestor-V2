@@ -17,8 +17,11 @@
  * Cảm ơn bạn đã sử dụng
  */
 
-const { spawn } = require("child_process");
-const log = require("./logger/log.js");
+const express = require('express');
+const path = require('path');
+const { spawn } = require('child_process');
+const log = require('./logger/log.js');
+
 const app = express();
 const PORT = 3000;
 
@@ -29,18 +32,24 @@ app.get('/', (req, res) => {
 });
 
 function startProject() {
-	const child = spawn("node", ["Goat.js"], {
-		cwd: __dirname,
-		stdio: "inherit",
-		shell: true
-	});
+  const child = spawn('node', ['Goat.js'], {
+    cwd: __dirname,
+    stdio: 'inherit',
+    shell: true,
+  });
 
-	child.on("close", (code) => {
-		if (code == 2) {
-			log.info("Restarting Project...");
-			startProject();
-		}
-	});
+  child.on('close', (code) => {
+    if (code == 2) {
+      log.info('Restarting Project...');
+      startProject();
+    }
+  });
 }
 
+
 startProject();
+
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
