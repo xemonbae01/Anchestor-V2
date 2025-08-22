@@ -19,6 +19,15 @@
 
 const { spawn } = require("child_process");
 const log = require("./logger/log.js");
+const app = express();
+const PORT = 3000;
+
+app.use(express.static(path.join(__dirname, 'dashboard')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard', 'page.html'));
+});
+
 function startProject() {
 	const child = spawn("node", ["Goat.js"], {
 		cwd: __dirname,
