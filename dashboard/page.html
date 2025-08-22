@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ancestor‑V2 Messenger Bot — Next‑Level Update</title>
+  <meta name="description" content="Ancestor‑V2 — a modern, optimized Messenger bot mod (fork of ntkhang03) with updated FCA, better command handling, tighter uptime, fresh commands, and a premium vibe."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f17;                /* deep space */
+      --panel: #0f1623;             /* card bg */
+      --text: #e7eefc;              /* primary text */
+      --muted: #9bb0d3;             /* secondary */
+      --accent: #6be4ff;            /* neon cyan */
+      --accent-2: #a78bfa;          /* soft violet */
+      --success: #71f4c8;           /* mint */
+      --danger: #ff6b9b;            /* pink */
+      --warning: #ffd36b;           /* amber */
+      --ring: rgba(107, 228, 255, .45);
+      --glass: rgba(255, 255, 255, .04);
+      --shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.03) inset;
+      --radius-xl: 22px;
+      --radius-xxl: 28px;
+      --blur: 10px;
+    }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #f7f9ff; --panel:#ffffff; --text:#0c1424; --muted:#5a6a87; --shadow: 0 12px 28px rgba(18,40,80,.08), 0 0 0 1px rgba(10,30,60,.06) inset; }
+      .neon { filter: none; text-shadow: none; }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg); color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg-wrap { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+    .gradient {
+      position: absolute; width: 120vmax; height: 120vmax; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      background:
+        radial-gradient(45vmax 45vmax at 15% 20%, rgba(167,139,250,.18), transparent 60%),
+        radial-gradient(40vmax 40vmax at 85% 30%, rgba(107,228,255,.14), transparent 60%),
+        radial-gradient(40vmax 40vmax at 40% 85%, rgba(113,244,200,.13), transparent 60%);
+      filter: blur(40px) saturate(120%);
+      animation: float 24s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translate(-50%, -50%) rotate(0deg); } 50% { transform: translate(-48%, -52%) rotate(8deg);} }
+
+    /* Layout */
+    .container { width: min(1200px, 92vw); margin: 0 auto; }
+    header.nav {
+      position: sticky; top: 0; backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(10,14,24,.6), rgba(10,14,24,.2) 70%, transparent);
+      border-bottom: 1px solid rgba(255,255,255,.06); z-index: 20;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: .2px; }
+    .brand .logo { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 30px rgba(107,228,255,.25), 0 0 0 1px rgba(255,255,255,.1) inset; }
+    .brand .logo svg { width: 22px; height: 22px; color: #081018; }
+
+    .nav a { color: var(--muted); text-decoration: none; font-weight: 600; padding: 8px 14px; border-radius: 999px; transition: .24s ease; }
+    .nav a:hover { color: var(--text); background: rgba(255,255,255,.06); box-shadow: 0 2px 12px rgba(0,0,0,.18) inset; }
+
+    /* Hero */
+    .hero { padding: 72px 0 24px; position: relative; }
+    .hero .badge-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted); font-weight: 700; letter-spacing:.2px; transition: transform .2s ease; }
+    .badge:hover { transform: translateY(-2px); }
+    .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 12px var(--success); }
+
+    .title { font-size: clamp(28px, 4.8vw, 60px); line-height: 1.05; margin: 10px 0 16px; font-weight: 900; letter-spacing: -.02em; }
+    .subtitle { font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); max-width: 850px; }
+
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+    .btn { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 14px 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,.09);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); color: var(--text); font-weight: 800; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; box-shadow: var(--shadow); overflow: hidden; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,.35), 0 0 0 2px var(--ring); }
+    .btn.primary { background: linear-gradient(135deg, rgba(107,228,255,.18), rgba(167,139,250,.21)); border-color: rgba(107,228,255,.3); }
+    .btn svg { width: 18px; height: 18px; }
+
+    .hero-card {
+      margin-top: 36px; padding: 18px; border-radius: var(--radius-xxl); background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08); box-shadow: var(--shadow);
+    }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr); }
+    .col-7 { grid-column: span 7; }
+    .col-5 { grid-column: span 5; }
+    @media (max-width: 900px) { .col-7, .col-5 { grid-column: 1 / -1; } }
+
+    /* Code block card */
+    .code {
+      background: #09101c; color: #d2e6ff; padding: 18px; border-radius: 18px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.6;
+      border: 1px solid rgba(107,228,255,.15); box-shadow: inset 0 0 0 1px rgba(167,139,250,.08), 0 10px 30px rgba(0,0,0,.35);
+    }
+    .code .kbd { color: var(--accent); }
+
+    /* Feature cards */
+    .features { padding: 64px 0; }
+    .feature-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius-xl);
+      padding: 18px; box-shadow: var(--shadow); position: relative; overflow: hidden; transform-style: preserve-3d; transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover { transform: translateY(-4px) rotateX(1deg) rotateY(-1deg); box-shadow: 0 18px 40px rgba(0,0,0,.45), 0 0 0 2px var(--ring); }
+    .card:before {
+      content: ""; position: absolute; inset: -120px; background: conic-gradient(from 120deg, rgba(107,228,255,.18), rgba(167,139,250,.16), rgba(113,244,200,.12), transparent 60%);
+      transform: translateZ(-1px) rotate(0deg); animation: spin 12s linear infinite; filter: blur(26px);
+    }
+    @keyframes spin { to { transform: translateZ(-1px) rotate(360deg); } }
+
+    .card h3 { margin: 6px 0 8px; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); }
+    .icon { width: 36px; height: 36px; display:grid; place-items:center; border-radius: 12px; background: rgba(107,228,255,.12); border: 1px solid rgba(107,228,255,.25); box-shadow: 0 2px 10px rgba(107,228,255,.18) inset; }
+    .icon svg { width: 18px; height: 18px; color: var(--accent); }
+
+    /* Changelog */
+    .section { padding: 64px 0; }
+    .section h2 { font-size: clamp(22px, 3.4vw, 32px); margin: 0 0 16px; }
+    .timeline { position: relative; margin: 26px 0 0; }
+    .timeline:before { content:""; position:absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--accent), transparent); }
+    .entry { position: relative; padding-left: 36px; margin: 18px 0; }
+    .entry:before { content:""; position:absolute; left: 3px; top: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 6px rgba(107,228,255,.15), 0 0 18px var(--accent); }
+    .entry h4 { margin: 0 0 6px; }
+    .entry p { margin: 0; color: var(--muted); }
+
+    /* Footer */
+    footer { padding: 36px 0 64px; color: var(--muted); }
+    .tiny { font-size: 12px; }
+
+    /* Utility */
+    .neon { text-shadow: 0 0 24px rgba(107,228,255,.65), 0 0 12px rgba(167,139,250,.55); }
+    .glass { background: var(--glass); backdrop-filter: blur(var(--blur)); border: 1px solid rgba(255,255,255,.08); }
+    .ring { box-shadow: 0 0 0 2px var(--ring); }
+    .caps { letter-spacing: .16em; text-transform: uppercase; font-weight: 800; font-size: 12px; color: var(--muted); }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .nav a { padding: 8px 10px; }
+      .btn { width: 100%; justify-content: center; }
+    }
+
+    /* Touch-friendly ripple */
+    .ripple { position: relative; overflow: hidden; }
+    .ripple span.r { position:absolute; border-radius: 50%; transform: scale(0); animation: ripple .6s ease-out; background: rgba(255,255,255,.25); }
+    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+    /* Scroll-reveal */
+    .reveal { opacity: 0; transform: translateY(14px) scale(.98); transition: .6s cubic-bezier(.2,.8,.2,1); }
+    .reveal.show { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+  <div class="bg-wrap">
+    <div class="gradient" aria-hidden="true"></div>
+  </div>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12c0-4.418 3.582-8 8-8m0 0 2.5 2.5M12 4 9.5 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:900;">Ancestor‑V2</div>
+          <div class="tiny" style="opacity:.8">Messenger Bot Mod • fork of ntkhang03</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#changelog">Changelog</a>
+        <a href="#install">Install</a>
+        <a href="#cta" class="ring" style="border-radius:999px;">Get It</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero container">
+    <div class="badge-row">
+      <span class="badge"><span class="dot"></span> Live • Optimized Build</span>
+      <span class="badge">Updated FCA</span>
+      <span class="badge">Better Command Handling</span>
+      <span class="badge">Better Uptime</span>
+      <span class="badge">New Commands</span>
+      <span class="badge">Premium Vibe ✦</span>
+    </div>
+
+    <h1 class="title neon">Ancestor‑V2 — Faster, Smarter, Sleeker.</h1>
+    <p class="subtitle">A next‑level Messenger bot modification built for stability and performance. Packed with an <strong>updated FCA</strong>, <strong>refined command pipeline</strong>, <strong>rock‑solid uptime</strong>, and <strong>fresh utilities</strong> — all wrapped in a premium, modern vibe.</p>
+
+    <div class="cta-row">
+      <a class="btn primary ripple" id="btn-install" href="#install" aria-label="Install Ancestor‑V2">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4v12m0 0 4-4m-4 4-4-4M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Quick Install
+      </a>
+      <a class="btn ripple" href="#features">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12h16M4 6h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Explore Features
+      </a>
+      <a class="btn ripple" href="#cta">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12.5 9.5 17 19 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Try Demo
+      </a>
+    </div>
+
+    <div class="hero-card grid reveal" style="margin-top:32px;">
+      <div class="col-7">
+        <div class="code" aria-label="terminal snippet">
+<pre><code><span class="kbd">$</span> npx ancestor-v2@latest init my-bot
+<span class="kbd">✔</span> Updated FCA linked — <em>stable & fast</em>
+<span class="kbd">✔</span> Command router optimized — <em>lazy load & sandboxed</em>
+<span class="kbd">✔</span> Health checks — <em>auto-restart & uptime pings</em>
+
+<span class="kbd">$</span> npm run start
+<span class="kbd">▶</span> Ancestor‑V2 is live on Messenger.
+</code></pre>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="card" style="height:100%; display:flex; flex-direction:column; gap:12px;">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v4m0 10v4M3 12h4m10 0h4M6.5 6.5l2.8 2.8M14.7 14.7l2.8 2.8M6.5 17.5l2.8-2.8M14.7 9.3l2.8-2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Premium vibe, practical core</h3>
+          <p>Polished UX, robust internals. Zero‑friction setup, safer command sandboxing, friendlier logs, and a dashboard‑ready API.</p>
+          <div class="caps">Built for creators & communities</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="features container reveal">
+    <h2 class="neon">Feature Highlights</h2>
+    <div class="feature-grid">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3l8 4v6c0 5-8 8-8 8s-8-3-8-8V7l8-4Z" stroke="currentColor" stroke-width="2"/></svg></div>
+        <h3>Updated FCA</h3>
+        <p>Latest compatible Facebook Chat API wiring with improved session handling and graceful fallback logic.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16M4 12h10M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Better Command Handling</h3>
+        <p>Fast router, per‑command isolation, hot‑reload during dev, and structured help with categories.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12a8 8 0 1 0 16 0" stroke="currentColor" stroke-width="2"/><path d="M12 2v10l6 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Better Uptime</h3>
+        <p>Health checks, watchdog restarts, and ping endpoints keep your bot online longer with less babysitting.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 14s3-6 8-6 8 6 8 6" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="14" r="3" stroke="currentColor" stroke-width="2"/></svg></div>
+        <h3>Optimized Core</h3>
+        <p>Lean deps, lazy imports, cache hints, and smarter logging for lower memory and higher throughput.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 7h10v10H7z" stroke="currentColor" stroke-width="2"/><path d="M12 3v4m0 10v4M3 12h4m10 0h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>New Commands</h3>
+        <p>Fresh utilities and moderation tools out of the box — customizable prefixes, permissions, and rate limits.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3l6 6-6 6-6-6 6-6Z" stroke="currentColor" stroke-width="2"/></svg></div>
+        <h3>Premium Vibe</h3>
+        <p>Subtle neon, glass panels, and motion that respects battery & prefers‑reduced‑motion settings.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHANGELOG -->
+  <section id="changelog" class="section container reveal">
+    <h2>Changelog</h2>
+    <div class="timeline">
+      <div class="entry">
+        <h4>v2.0 — Core refresh</h4>
+        <p>Rebased on latest FCA, reworked command router, added health checks, and improved boot logs.</p>
+      </div>
+      <div class="entry">
+        <h4>v2.1 — Stability patch</h4>
+        <p>Fix session persistence, add exponential backoff for reconnect, refine error boundaries.</p>
+      </div>
+      <div class="entry">
+        <h4>v2.2 — New commands pack</h4>
+        <p>Utilities for moderation, fun, and info. Tighter permission schema and per‑group overrides.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section id="install" class="section container reveal">
+    <h2 class="neon">Install in minutes</h2>
+    <div class="grid hero-card" style="margin-top:16px;">
+      <div class="col-7">
+        <div class="code">
+<pre><code># 1) Create project
+npx ancestor-v2@latest init my-bot
+
+# 2) Configure environment
+cp .env.example .env
+# set your Page tokens, app secrets, session, etc.
+
+# 3) Run
+npm run start    # dev
+pm2 start bot.js # prod
+</code></pre>
+        </div>
+      </div>
+      <div class="col-5" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="card" style="flex:1;">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <h3>Render/PM2 friendly</h3>
+          <p>Works great on Render, Railway, VPS, or your own server. Includes health endpoint for uptime pingers.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 7v10M7 12h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <h3>Type‑safe options</h3>
+          <p>Config schema validation so bad env values don’t crash your bot at runtime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section id="cta" class="section container reveal" style="text-align:center;">
+    <h2 class="neon">Ready to give your chat a brain upgrade?</h2>
+    <p class="subtitle" style="margin: 0 auto 18px; max-width:800px;">Drop Ancestor‑V2 into your workflow and ship a cleaner, faster Messenger experience. Built on a battle‑tested base (ntkhang03), modernized for today.</p>
+    <div class="cta-row" style="justify-content:center;">
+      <a class="btn primary ripple" href="#install">Install Now</a>
+      <a class="btn ripple" href="#" onclick="alert('Demo endpoint placeholder — wire this to your hosted demo.'); return false;">Open Demo</a>
+    </div>
+  </section>
+
+  <footer class="container tiny">
+    <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>© <span id="year"></span> Ancestor‑V2 • by Redwan • fork of ntkhang03</div>
+      <div>Design: neon‑glass aesthetic • Accessible motion • Mobile‑first</div>
+    </div>
+  </footer>
+
+  <script>
+    
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+
+    const ripples = document.querySelectorAll('.ripple');
+    ripples.forEach(el => {
+      el.addEventListener('pointerdown', e => {
+        const rect = el.getBoundingClientRect();
+        const r = document.createElement('span');
+        r.className = 'r';
+        const size = Math.max(rect.width, rect.height);
+        r.style.width = r.style.height = size + 'px';
+        r.style.left = (e.clientX - rect.left - size/2) + 'px';
+        r.style.top = (e.clientY - rect.top - size/2) + 'px';
+        el.appendChild(r);
+        setTimeout(() => r.remove(), 700);
+      });
+    });
+
+
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      let hover = false;
+      card.addEventListener('mouseenter', () => hover = true);
+      card.addEventListener('mouseleave', () => { hover = false; card.style.transform = ''; card.style.boxShadow=''; });
+      card.addEventListener('mousemove', (e) => {
+        if (!hover) return;
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5;
+        const y = (e.clientY - r.top) / r.height - .5;
+        card.style.transform = `rotateX(${(-y*4).toFixed(2)}deg) rotateY(${(x*4).toFixed(2)}deg) translateY(-4px)`;
+      });
+    });
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(ent => { if (ent.isIntersecting) ent.target.classList.add('show'); });
+    }, { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        if (id.length > 1 && document.querySelector(id)) {
+          e.preventDefault();
+          document.querySelector(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
