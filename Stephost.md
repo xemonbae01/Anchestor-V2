@@ -21,7 +21,7 @@ If you're deploying your bot on a **VPS** (e.g., Ubuntu, Debian, CentOS), ensure
 
 📄 config.json
 📄 configCommands.json
-📄 account.dev.txt
+📄 account.txt
 
 
 ☁️ Hosting on Platforms like Render
@@ -29,8 +29,8 @@ If you're deploying your bot on a **VPS** (e.g., Ubuntu, Debian, CentOS), ensure
 When deploying to cloud platforms such as Render, Heroku, or Railway, use the following configuration files:
 
 📄 config.dev.json
-📄 configCommands.json
+📄 configCommands.dev.json
 📄 account.dev.txt
 
 
-🔁 config.dev.json is optimized for development/CI environments with environment variables and limited file access.
+🔁 config.dev.json is optimized for development/CI environments with environment variables and limited file access. and you need dual file for config because of fca miss coding first you have to create config.json and again config.dev.json for render to understand
