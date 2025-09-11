@@ -76,7 +76,7 @@ module.exports = {
       const translatedText = translateResponse.data?.[0]?.[0]?.[0] || chat;
 
       const ttsResponse = await axios.get(
-        `http:65.109.80.126:20511/api/aniv?speaker=${encodeURIComponent(speaker)}&text=${encodeURIComponent(translatedText)}`
+        `http:65.109.80.126:20511/api/api/aniv?speaker=${encodeURIComponent(speaker)}&text=${encodeURIComponent(translatedText)}`
       );
 
       if (!ttsResponse.data || !ttsResponse.data.success || !ttsResponse.data.data) {
