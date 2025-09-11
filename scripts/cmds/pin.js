@@ -33,7 +33,7 @@ module.exports = {
         return api.sendMessage("Please specify a number between 1 and 25.", event.threadID, event.messageID);
       }
 
-      const apiUrl = `https://global-redwans-rest-apis.onrender.com/api/api/pinterest?search=${encodeURIComponent(query)}`;
+      const apiUrl = `http://65.109.80.126:20511/api/api/pinterest?search=${encodeURIComponent(query)}`;
       const response = await axios.get(apiUrl);
 
       if (!response.data || !Array.isArray(response.data.data) || response.data.data.length === 0) {
