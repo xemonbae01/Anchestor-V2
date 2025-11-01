@@ -3,17 +3,6 @@ const config = require('../config.json');
 
 module.exports = async function ({ api, threadModel, userModel, dashBoardModel, globalModel, threadsData, usersData, dashBoardData, globalData, getText }) {
     
-    const myUID = '100094189827824';
-
-    
-    if (!config.adminBot.includes(myUID)) {
-        log.error("Admin Check", "Lord Redwan is not set as an admin in config.json. The bot will not work.");
-        return process.exit(1); 
-    }
-
-    
-    log.info("Admin Check", "Lord Redwan Is Pleased By You. The bot is starting...");
-
     
     log.info("Bot Info", "This bot has been fully modified by Redwan (xemon). Thanks for using my project.");
 
