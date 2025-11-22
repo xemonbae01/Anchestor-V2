@@ -23,7 +23,7 @@ module.exports = {
       en: "{p}{n} --url <website> --dt <duration in seconds>",
     },
   },
-  onStart: async function ({ api, event, args }) {
+  onStart: async function ({ api, event, args, envGlobal }) {
     api.setMessageReaction("🎬", event.messageID, (err) => {}, true);
 
     
@@ -44,7 +44,9 @@ module.exports = {
 
     try {
       
-      const fetchUrl = `https://xemo.up.railway.app/api/screenrecord?url=${encodeURIComponent(url)}&duration=${duration}`;
+      const baseUrl = envGlobal.xemoapiurl || "https://redwans-apis.gleeze.com"; 
+      const fetchUrl = `${baseUrl}/api/screenrecord?url=${encodeURIComponent(url)}&duration=${duration}`;
+      
       const videoStream = await getStreamFromURL(fetchUrl);
 
       await api.sendMessage({
