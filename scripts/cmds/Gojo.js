@@ -14,7 +14,7 @@ module.exports = {
     guide: "{pn} <your message> or reply to an AI message."
   },
 
-  onStart: async function ({ api, event, args }) {
+  onStart: async function ({ api, event, args, envGlobal }) {
     let query = args.join(" ");
     if (event.type === "message_reply" && event.messageReply) {
       query = event.messageReply.body;
@@ -24,7 +24,8 @@ module.exports = {
     }
 
     const uid = event.senderID;
-    const apiUrl = `https://xemo.up.railway.app/api/gojo?uid=${uid}&msg=${encodeURIComponent(query)}`;
+    const baseUrl = envGlobal?.xemoapiurl || "https://redwans-apis.gleeze.com";
+    const apiUrl = `${baseUrl}/api/gojo?uid=${uid}&msg=${encodeURIComponent(query)}`;
 
     try {
       const response = await axios.get(apiUrl);
@@ -34,7 +35,7 @@ module.exports = {
         return api.sendMessage("❌ AI service returned an invalid response.", event.threadID, event.messageID);
       }
 
-      const finalResponse = `💙 𝙂𝙊𝙅𝙊 𝙎𝘼𝙏𝙊𝙍𝙐 𝘼𝙄 💙\n\n${data.reply}`;
+      const finalResponse = ` 𝙂𝙊𝙅𝙊 𝙎𝘼𝙏𝙊𝙍𝙐 𝘼𝙄 \n\n${data.reply}`;
 
       api.sendMessage(finalResponse, event.threadID, (err, msgInfo) => {
         if (!err) {
@@ -51,14 +52,15 @@ module.exports = {
     }
   },
 
-  onReply: async function ({ api, event }) {
+  onReply: async function ({ api, event, envGlobal }) {
     try {
       const replyData = global.GoatBot.onReply.get(event.messageReply.messageID);
       if (!replyData || replyData.author !== event.senderID) return;
 
       const userAnswer = event.body.trim();
       const uid = event.senderID;
-      const apiUrl = `https://xemo.up.railway.app/api/gojo?uid=${uid}&msg=${encodeURIComponent(userAnswer)}`;
+      const baseUrl = envGlobal?.xemoapiurl || "https://redwans-apis.gleeze.com";
+      const apiUrl = `${baseUrl}/api/gojo?uid=${uid}&msg=${encodeURIComponent(userAnswer)}`;
 
       const response = await axios.get(apiUrl);
       const data = response.data;
@@ -84,4 +86,3 @@ module.exports = {
     }
   }
 };
-    
